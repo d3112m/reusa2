@@ -20,13 +20,17 @@ export async function getServerSideProps({ params }) {
       props: { item: JSON.parse(JSON.stringify(item)) },
     };
   } catch (error) {
-    console.error(error);
+    console.error(`Failed to fetch item ${params.id}:`, error);
     return { notFound: true };
   }
 }
 
 const ItemPage = ({ item }) => {
   const router = useRouter();
+
+  if (router.isFallback || !item) {
+    return <p className="p-4">Carregando...</p>;
+  }
 
   const typeColors = {
     'Doação': 'bg-accent/20 text-accent-dark',

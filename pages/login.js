@@ -4,7 +4,7 @@ import Link from 'next/link';
 import useUser from '@/lib/useUser';
 
 export default function Login() {
-  useUser({ redirectTo: '/', redirectIfFound: true });
+  useUser({ redirectTo: '/items', redirectIfFound: true });
 
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function Login() {
       });
 
       if (res.status === 200) {
-        Router.push('/');
+        Router.push('/items');
       } else {
         const { message } = await res.json();
         setErrorMsg(message);

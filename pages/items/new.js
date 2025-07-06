@@ -29,7 +29,7 @@ export default function NewItem() {
       });
 
       if (res.status === 201) {
-        Router.push('/');
+        Router.push('/items');
       } else {
         const { message } = await res.json();
         setErrorMsg(message);

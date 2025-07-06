@@ -4,7 +4,7 @@ import Link from 'next/link';
 import useUser from '@/lib/useUser';
 
 export default function Register() {
-  useUser({ redirectTo: '/', redirectIfFound: true });
+  useUser({ redirectTo: '/items', redirectIfFound: true });
 
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);

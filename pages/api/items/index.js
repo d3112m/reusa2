@@ -1,13 +1,18 @@
-import prisma from '../../../lib/prisma';
+import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const items = await prisma.item.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: { author: { select: { name: true } } },
-    });
-    return res.status(200).json(items);
+    try {
+      const items = await prisma.item.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: { author: { select: { name: true } } },
+      });
+      return res.status(200).json(items);
+    } catch (error) {
+      console.error("API Error fetching items:", error);
+      return res.status(500).json({ message: "Failed to fetch items" });
+    }
   }
 
   if (req.method === 'POST') {
@@ -37,6 +42,7 @@ export default async function handler(req, res) {
       });
       return res.status(201).json(newItem);
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: 'Erro ao criar o item.' });
     }
   }
