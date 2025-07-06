@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Router from 'next/router';
-import useUser from '../../lib/useUser';
+import useUser from '@/lib/useUser';
 
 export default function NewItem() {
   const { user, isLoading: isUserLoading } = useUser({ redirectTo: '/login' });

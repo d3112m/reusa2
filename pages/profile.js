@@ -1,4 +1,4 @@
-import useUser from '../lib/useUser';
+import useUser from '@/lib/useUser';
 import Router from 'next/router';
 
 export default function Profile() {

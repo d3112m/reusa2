@@ -1,5 +1,5 @@
-import prisma from '../lib/prisma';
-import ItemCard from '../components/ItemCard';
+import prisma from '@/lib/prisma';
+import ItemCard from '@/components/ItemCard';
 
 export async function getServerSideProps() {
   const items = await prisma.item.findMany({

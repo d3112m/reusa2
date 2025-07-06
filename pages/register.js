@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Router from 'next/router';
 import Link from 'next/link';
-import useUser from '../lib/useUser';
+import useUser from '@/lib/useUser';
 
 export default function Register() {
   useUser({ redirectTo: '/', redirectIfFound: true });

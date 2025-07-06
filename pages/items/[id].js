@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+import prisma from '@/lib/prisma';
 import { useRouter } from 'next/router';
 
 export async function getServerSideProps({ params }) {
