@@ -1,5 +1,7 @@
 import prisma from '@/lib/prisma';
 import { useRouter } from 'next/router';
+import useUser from '@/lib/useUser';
+import { useState } from 'react';
 
 export async function getServerSideProps({ params }) {
   try {
@@ -27,6 +29,39 @@ export async function getServerSideProps({ params }) {
 
 const ItemPage = ({ item }) => {
   const router = useRouter();
+  const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleContact = async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: item.id }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Falha ao iniciar a conversa.');
+      }
+
+      const conversation = await res.json();
+      router.push(`/messages/${conversation.id}`);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (router.isFallback || !item) {
     return <p className="p-4">Carregando...</p>;
@@ -37,6 +72,8 @@ const ItemPage = ({ item }) => {
     'Troca': 'bg-secondary/20 text-secondary-dark',
     'Reciclagem': 'bg-medium/20 text-medium',
   };
+
+  const isOwnItem = user?.id === item.authorId;
 
   return (
     <div className="flex-grow">
@@ -90,17 +127,23 @@ const ItemPage = ({ item }) => {
                 </div>
             </div>
 
-            <button className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2">
+            {!isOwnItem && (
+              <button 
+                onClick={handleContact}
+                disabled={isLoading}
+                className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400"
+              >
                 <i className="fas fa-comments"></i>
-                <span>Entrar em Contato</span>
-            </button>
+                <span>{isLoading ? 'A iniciar...' : 'Entrar em Contato'}</span>
+              </button>
+            )}
+            {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </div>
       </div>
     </div>
   );
 };
 
-// Layout customizado para esta página (sem a NavBar inferior)
 ItemPage.getLayout = function getLayout(page) {
     return (
         <div className="max-w-sm mx-auto h-screen flex flex-col border border-gray-300 shadow-lg overflow-hidden bg-light">
