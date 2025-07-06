@@ -14,16 +14,17 @@ export default async function handler(req, res) {
   }
 
   const { content, conversationId } = req.body;
+  const numericConversationId = Number(conversationId);
 
-  if (!content || !conversationId) {
-    return res.status(400).json({ message: 'Conteúdo e ID da conversa são obrigatórios.' });
+  if (!content || !numericConversationId) {
+    return res.status(400).json({ message: 'Conteúdo e ID da conversa válidos são obrigatórios.' });
   }
 
   try {
     // Verifica se o utilizador pertence à conversa
     const conversation = await prisma.conversation.findFirst({
       where: {
-        id: conversationId,
+        id: numericConversationId,
         participants: { some: { id: user.id } },
       },
     });
@@ -35,14 +36,14 @@ export default async function handler(req, res) {
     const message = await prisma.message.create({
       data: {
         content,
-        conversationId,
+        conversationId: numericConversationId,
         senderId: user.id,
       },
     });
 
     // Atualiza o `updatedAt` da conversa para que ela apareça no topo da lista
     await prisma.conversation.update({
-        where: { id: conversationId },
+        where: { id: numericConversationId },
         data: { updatedAt: new Date() }
     });
 
