@@ -1,11 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/items": "pages/items.js",
-  "/api/items": "pages/api/items.js",
-  "/items/[id]": "pages/items/[id].js",
-  "/api/auth/me": "pages/api/auth/me.js",
-  "/messages": "pages/messages.js",
-  "/api/conversations": "pages/api/conversations.js"
-}
+{}
