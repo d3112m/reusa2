@@ -13,23 +13,50 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  password  String
-  createdAt DateTime @default(now())
-  items     Item[]
+  id                  Int             @id @default(autoincrement())
+  email               String          @unique
+  name                String
+  password            String
+  createdAt           DateTime        @default(now())
+  items               Item[]
+  sentMessages        Message[]       @relation("sent")
+  conversations       Conversation[]  @relation("participants")
 }
 
 model Item {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  category    String
-  condition   String
-  type        String // "Doação", "Troca", "Reciclagem"
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    Int
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String
+  category      String
+  condition     String
+  type          String // "Doação", "Troca", "Reciclagem"
+  imageUrl      String?
+  createdAt     DateTime        @default(now())
+  author        User            @relation(fields: [authorId], references: [id])
+  authorId      Int
+  conversations Conversation[]
+}
+
+model Conversation {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  item          Item      @relation(fields: [itemId], references: [id])
+  itemId        Int
+  
+  participants  User[]    @relation("participants")
+  messages      Message[]
+}
+
+model Message {
+  id              Int           @id @default(autoincrement())
+  content         String
+  createdAt       DateTime      @default(now())
+  
+  conversation    Conversation  @relation(fields: [conversationId], references: [id])
+  conversationId  Int
+  
+  sender          User          @relation("sent", fields: [senderId], references: [id])
+  senderId        Int
 }
