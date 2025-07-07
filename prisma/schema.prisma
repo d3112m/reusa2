@@ -1,15 +1,11 @@
 datasource db {
-  provider = "sqlite"
-  // Usa uma variável de ambiente para a URL da base de dados.
-  // Em produção (Vercel), aponta para um diretório com permissão de escrita.
-  // Em desenvolvimento, aponta para o ficheiro local.
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  // Usa uma variável de ambiente para a URL da sua base de dados PostgreSQL.
+  url      = env("POSTGRES_URL")
 }
 
 generator client {
   provider      = "prisma-client-js"
-  // Adiciona o target de binário para o ambiente da Vercel (baseado em Red Hat Linux)
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 model User {
