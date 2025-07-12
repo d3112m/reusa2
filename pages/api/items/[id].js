@@ -33,7 +33,11 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
         try {
-            await prisma.item.delete({ where: { id: itemId } });
+            // Exclui explicitamente as conversas relacionadas antes de excluir o item
+            await prisma.$transaction([
+                prisma.conversation.deleteMany({ where: { itemId: itemId } }),
+                prisma.item.delete({ where: { id: itemId } }),
+            ]);
             return res.status(200).json({ message: 'Item excluído com sucesso.' });
         } catch (error) {
             console.error(`API Error deleting item ${id}:`, error);
