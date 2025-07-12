@@ -1,5 +1,6 @@
 import useUser from '@/lib/useUser';
 import Router from 'next/router';
+import { mutate } from 'swr';
 
 export default function Profile() {
   const { user, isLoading } = useUser({ redirectTo: '/login' });
@@ -7,6 +8,7 @@ export default function Profile() {
   async function handleLogout(e) {
     e.preventDefault();
     await fetch('/api/auth/logout');
+    mutate('/api/auth/me');
     Router.push('/login');
   }
 

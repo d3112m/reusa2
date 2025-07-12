@@ -4,7 +4,22 @@ import { getSession } from '@/lib/session';
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
+      const { search, type } = req.query;
+      const whereClause = {};
+
+      if (search) {
+        whereClause.title = {
+          contains: search,
+          mode: 'insensitive',
+        };
+      }
+
+      if (type) {
+        whereClause.type = type;
+      }
+
       const items = await prisma.item.findMany({
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         include: { author: { select: { name: true } } },
       });

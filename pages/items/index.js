@@ -9,7 +9,7 @@ export default function ItemsPage() {
   return (
     <div className="p-4">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-primary">ReUsa</h1>
+        <h1 className="text-3xl font-bold text-primary">ReUse</h1>
         <p className="text-medium">Itens para doar, trocar ou reciclar na sua comunidade.</p>
       </header>
       
