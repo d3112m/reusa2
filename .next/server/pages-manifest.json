@@ -3,10 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/items": "pages/items.js",
-  "/items/[id]": "pages/items/[id].js",
-  "/api/items": "pages/api/items.js",
-  "/api/auth/me": "pages/api/auth/me.js",
-  "/api/auth/logout": "pages/api/auth/logout.js",
-  "/profile": "pages/profile.js",
-  "/login": "pages/login.js"
+  "/items/new": "pages/items/new.js",
+  "/items/[id]": "pages/items/[id].js"
 }

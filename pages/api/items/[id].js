@@ -1,6 +1,14 @@
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb', // Aumenta o limite para 10MB
+    },
+  },
+};
+
 export default async function handler(req, res) {
     const session = await getSession(req, res);
     const user = session.user;

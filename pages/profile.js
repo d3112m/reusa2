@@ -1,22 +1,16 @@
 import useUser from '@/lib/useUser';
 import Router from 'next/router';
-import { mutate } from 'swr';
 
 export default function Profile() {
-  const { user, isLoading } = useUser({ redirectTo: '/login' });
+  const { user, isLoading, mutate } = useUser({ redirectTo: '/login' });
 
   async function handleLogout(e) {
     e.preventDefault();
-    
-    // Limpa a cache do SWR localmente de forma otimista, definindo o utilizador como null.
-    // O `false` no final impede uma revalidação automática, pois já sabemos o resultado.
-    mutate('/api/auth/me', null, false);
-    
-    // Destrói a sessão no servidor.
     await fetch('/api/auth/logout');
-    
-    // Redireciona para a página de login.
-    Router.push('/login');
+    // Força a revalidação dos dados do utilizador. O SWR irá buscar novamente
+    // em /api/auth/me, que retornará null, atualizando a cache e a UI.
+    // O hook useUser irá então tratar do redirecionamento.
+    mutate();
   }
 
   if (isLoading || !user) {
