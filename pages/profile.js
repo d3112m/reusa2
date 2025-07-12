@@ -7,8 +7,15 @@ export default function Profile() {
 
   async function handleLogout(e) {
     e.preventDefault();
+    
+    // Limpa a cache do SWR localmente de forma otimista, definindo o utilizador como null.
+    // O `false` no final impede uma revalidação automática, pois já sabemos o resultado.
+    mutate('/api/auth/me', null, false);
+    
+    // Destrói a sessão no servidor.
     await fetch('/api/auth/logout');
-    mutate('/api/auth/me');
+    
+    // Redireciona para a página de login.
     Router.push('/login');
   }
 
