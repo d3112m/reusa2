@@ -27,16 +27,6 @@
       "static/chunks/main.js",
       "static/chunks/pages/items.js"
     ],
-    "/items/[id]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/items/[id].js"
-    ],
-    "/items/new": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/items/new.js"
-    ],
     "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

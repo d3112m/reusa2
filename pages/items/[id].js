@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { useRouter } from 'next/router';
 import useUser from '@/lib/useUser';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export async function getServerSideProps({ params }) {
   try {
@@ -58,7 +59,6 @@ const ItemPage = ({ item }) => {
   };
 
   const handleDelete = async () => {
-    // Adiciona uma confirmação antes de excluir
     if (!window.confirm("Tem a certeza que deseja excluir este anúncio? Esta ação é irreversível.")) {
         return;
     }
@@ -160,10 +160,15 @@ const ItemPage = ({ item }) => {
                   </button>
                 )}
                 {isOwnItem && (
-                    <button onClick={handleDelete} disabled={isLoading} className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400">
-                        <i className="fas fa-trash-alt"></i>
-                        <span>{isLoading ? 'A excluir...' : 'Excluir Anúncio'}</span>
-                    </button>
+                    <div className="flex space-x-2">
+                        <Link href={`/items/${item.id}/edit`} className="flex-1 text-center bg-secondary hover:bg-secondary-dark text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md">
+                            <i className="fas fa-edit mr-2"></i>Editar
+                        </Link>
+                        <button onClick={handleDelete} disabled={isLoading} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400">
+                            <i className="fas fa-trash-alt"></i>
+                            <span>{isLoading ? 'A excluir...' : 'Excluir'}</span>
+                        </button>
+                    </div>
                 )}
             </div>
             {error && <p className="text-red-500 text-center mt-2">{error}</p>}
