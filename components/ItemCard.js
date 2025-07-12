@@ -7,11 +7,15 @@ export default function ItemCard({ item }) {
     'Reciclagem': 'bg-medium/20 text-medium',
   };
 
+  const imageUrl = item.imageUrls && item.imageUrls.length > 0
+    ? item.imageUrls[0]
+    : `https://placehold.co/80x80/cccccc/969696?text=${item.category.substring(0,3)}`;
+
   return (
     <Link href={`/items/${item.id}`} className="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
       <div className="flex space-x-4">
         <img 
-          src={item.imageUrl || `https://placehold.co/80x80/cccccc/969696?text=${item.category.substring(0,3)}`} 
+          src={imageUrl} 
           alt={item.title} 
           className="w-20 h-20 rounded-md object-cover flex-shrink-0"
           onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/80x80/cccccc/969696?text=Error`; }}

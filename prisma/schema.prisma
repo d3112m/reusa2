@@ -26,7 +26,7 @@ model Item {
   category      String
   condition     String
   type          String // "Doação", "Troca", "Reciclagem"
-  imageUrl      String?
+  imageUrls     String[]        @default([]) // Alterado para uma lista de strings para armazenar Base64
   createdAt     DateTime        @default(now())
   author        User            @relation(fields: [authorId], references: [id])
   authorId      Int

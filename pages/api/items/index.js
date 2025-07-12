@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Não autorizado.' });
     }
 
-    const { title, description, category, condition, type } = req.body;
+    const { title, description, category, condition, type, imageUrls } = req.body;
     
     if (!title || !description || !category || !condition || !type) {
         return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
@@ -52,6 +52,7 @@ export default async function handler(req, res) {
           category,
           condition,
           type,
+          imageUrls: imageUrls || [],
           authorId: user.id,
         },
       });

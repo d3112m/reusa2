@@ -2,15 +2,62 @@ import { useState } from 'react';
 import Router from 'next/router';
 import useUser from '@/lib/useUser';
 
+const MAX_FILES = 4;
+const MAX_SIZE_MB = 2;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
 export default function NewItem() {
   const { user, isLoading: isUserLoading } = useUser({ redirectTo: '/login' });
   const [errorMsg, setErrorMsg] = useState('');
+  const [fileError, setFileError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [previews, setPreviews] = useState([]);
+  const [base64Images, setBase64Images] = useState([]);
+
+  const handleFileChange = (e) => {
+    setFileError('');
+    const files = Array.from(e.target.files);
+
+    if (files.length > MAX_FILES) {
+      setFileError(`Não pode selecionar mais de ${MAX_FILES} fotos.`);
+      e.target.value = '';
+      setPreviews([]);
+      setBase64Images([]);
+      return;
+    }
+
+    const oversizedFiles = files.filter(file => file.size > MAX_SIZE_BYTES);
+    if (oversizedFiles.length > 0) {
+      setFileError(`Alguns ficheiros excedem o limite de ${MAX_SIZE_MB}MB.`);
+      e.target.value = '';
+      setPreviews([]);
+      setBase64Images([]);
+      return;
+    }
+
+    const filePromises = files.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    });
+
+    Promise.all(filePromises).then(base64s => {
+      setBase64Images(base64s);
+      setPreviews(base64s);
+    }).catch(error => {
+      console.error("Error converting files to Base64", error);
+      setFileError("Ocorreu um erro ao processar as imagens.");
+    });
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
     setErrorMsg('');
+    setFileError('');
 
     const form = e.currentTarget;
     const body = {
@@ -19,6 +66,7 @@ export default function NewItem() {
       category: form.category.value,
       condition: form.condition.value,
       type: form.type.value,
+      imageUrls: base64Images,
     };
 
     try {
@@ -58,6 +106,27 @@ export default function NewItem() {
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-dark mb-1">Descrição</label>
           <textarea id="description" name="description" rows="4" className="w-full p-3 border border-gray-300 rounded-lg" required></textarea>
+        </div>
+        <div>
+            <label htmlFor="itemPhotos" className="block text-sm font-medium text-dark mb-1">Fotos (até {MAX_FILES})</label>
+            <input 
+                type="file" 
+                id="itemPhotos" 
+                name="itemPhotos" 
+                multiple 
+                accept="image/png, image/jpeg, image/webp"
+                onChange={handleFileChange}
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+            />
+            <p className="text-xs text-medium mt-1">Tamanho máximo por foto: {MAX_SIZE_MB}MB.</p>
+            {fileError && <p className="text-red-500 text-sm mt-1">{fileError}</p>}
+            {previews.length > 0 && (
+                <div className="mt-2 grid grid-cols-4 gap-2">
+                    {previews.map((src, index) => (
+                        <img key={index} src={src} alt={`Preview ${index + 1}`} className="w-full h-16 object-cover rounded-md" />
+                    ))}
+                </div>
+            )}
         </div>
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-dark mb-1">Categoria</label>
