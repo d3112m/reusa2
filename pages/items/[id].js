@@ -9,7 +9,7 @@ export async function getServerSideProps({ params }) {
       where: { id: Number(params.id) },
       include: {
         author: {
-          select: { name: true, email: true },
+          select: { id: true, name: true, email: true },
         },
       },
     });
@@ -57,6 +57,31 @@ const ItemPage = ({ item }) => {
     }
   };
 
+  const handleDelete = async () => {
+    // Adiciona uma confirmação antes de excluir
+    if (!window.confirm("Tem a certeza que deseja excluir este anúncio? Esta ação é irreversível.")) {
+        return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    try {
+        const res = await fetch(`/api/items/${item.id}`, {
+            method: 'DELETE',
+        });
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message || 'Falha ao excluir o item.');
+        }
+        router.push('/items');
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+
   if (router.isFallback || !item) {
     return <p className="p-4">Carregando...</p>;
   }
@@ -67,7 +92,7 @@ const ItemPage = ({ item }) => {
     'Reciclagem': 'bg-medium/20 text-medium',
   };
 
-  const isOwnItem = user?.id === item.authorId;
+  const isOwnItem = user?.id === item.author.id;
   const hasImages = item.imageUrls && item.imageUrls.length > 0;
   const mainImageUrl = hasImages ? item.imageUrls[currentImageIndex] : `https://placehold.co/600x400/cccccc/969696?text=${item.category}`;
 
@@ -127,12 +152,20 @@ const ItemPage = ({ item }) => {
                 </div>
             </div>
 
-            {!isOwnItem && (
-              <button onClick={handleContact} disabled={isLoading} className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400">
-                <i className="fas fa-comments"></i>
-                <span>{isLoading ? 'A iniciar...' : 'Entrar em Contato'}</span>
-              </button>
-            )}
+            <div className="space-y-2">
+                {!isOwnItem && (
+                  <button onClick={handleContact} disabled={isLoading} className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400">
+                    <i className="fas fa-comments"></i>
+                    <span>{isLoading ? 'A iniciar...' : 'Entrar em Contato'}</span>
+                  </button>
+                )}
+                {isOwnItem && (
+                    <button onClick={handleDelete} disabled={isLoading} className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2 disabled:bg-gray-400">
+                        <i className="fas fa-trash-alt"></i>
+                        <span>{isLoading ? 'A excluir...' : 'Excluir Anúncio'}</span>
+                    </button>
+                )}
+            </div>
             {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </div>
       </div>

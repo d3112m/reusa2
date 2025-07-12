@@ -3,9 +3,12 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/items": "pages/items.js",
-  "/api/auth/logout": "pages/api/auth/logout.js",
-  "/api/items": "pages/api/items.js",
   "/login": "pages/login.js",
   "/api/auth/me": "pages/api/auth/me.js",
-  "/profile": "pages/profile.js"
+  "/api/items": "pages/api/items.js",
+  "/items/[id]": "pages/items/[id].js",
+  "/items/new": "pages/items/new.js",
+  "/profile": "pages/profile.js",
+  "/api/auth/login": "pages/api/auth/login.js",
+  "/api/items/[id]": "pages/api/items/[id].js"
 }
